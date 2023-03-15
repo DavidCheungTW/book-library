@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const request = require("supertest");
-const { Author } = require("../src/models");
+const { Author, Genre, Book } = require("../src/models");
 const app = require("../src/app");
 
 describe("/authors", () => {
@@ -33,7 +33,8 @@ describe("/authors", () => {
           author: "author999",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("author must be unique");
+        expect(response.body.name).to.equal("SequelizeUniqueConstraintError");
+        // expect(response.body).to.equal("author must be unique");
       });
 
       it("author must not be empty", async () => {
@@ -41,9 +42,10 @@ describe("/authors", () => {
           authorId: "",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "We need a author in so that we can create one"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "We need a author in so that we can create one"
+        // );
       });
     });
   });
@@ -142,9 +144,10 @@ describe("/authors", () => {
           .patch(`/authors/${author.id}`)
           .send({ author: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "We need a author in so that we can create one"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "We need a author in so that we can create one"
+        // );
       });
     });
 

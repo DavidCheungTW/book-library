@@ -2,10 +2,15 @@ const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/reader");
 
-router.post("/readers", controllers.createReader);
-router.get("/readers", controllers.readReader);
-router.get("/readers/:id", controllers.readSingleReader);
-router.patch("/readers/:id", controllers.patchReader);
-router.delete("/readers/:id", controllers.deleteReader);
+router
+  .route("/readers")
+  .post(controllers.createReader)
+  .get(controllers.readReader);
+
+router
+  .route("/readers/:id")
+  .get(controllers.readSingleReader)
+  .patch(controllers.patchReader)
+  .delete(controllers.deleteReader);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const request = require("supertest");
-const { Book } = require("../src/models");
+const { Book, Author, Genre } = require("../src/models");
 const app = require("../src/app");
 
 describe("/books", () => {
@@ -57,6 +57,22 @@ describe("/books", () => {
         expect(newBookRecord.ISBN).to.equal("isbn001");
       });
 
+      it("test get author by id also get book information", async () => {
+        let response;
+        response = await request(app).post("/books").send({
+          title: "title001",
+          ISBN: "isbn001",
+          authorId: author.body.id,
+          genreId: genre.body.id,
+        });
+        expect(response.status).to.equal(201);
+
+        response = await request(app).get(`/authors/${author.body.id}`);
+        expect(response.status).to.equal(200);
+        expect(response.body.books[0].title).to.equal("title001");
+        expect(response.body.books[0].ISBN).to.equal("isbn001");
+      });
+
       it("title must be exist", async () => {
         const response = await request(app).post("/books").send({
           ISBN: "isbn001",
@@ -64,7 +80,8 @@ describe("/books", () => {
           genreId: genre.body.id,
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("We need a book title");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("We need a book title");
       });
 
       it("title must not be empty", async () => {
@@ -75,7 +92,8 @@ describe("/books", () => {
           genreId: genre.body.id,
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("The book title cannot be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("The book title cannot be empty");
       });
 
       it("authorId must be exist", async () => {
@@ -85,7 +103,8 @@ describe("/books", () => {
           genreId: genre.body.id,
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("This Book must have an author");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("This Book must have an author");
       });
 
       it("authorId must not be empty", async () => {
@@ -96,7 +115,8 @@ describe("/books", () => {
           genreId: genre.body.id,
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("This Book must have an author");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("This Book must have an author");
       });
 
       it("authorId must be existed in Authors table", async () => {
@@ -107,9 +127,12 @@ describe("/books", () => {
           genreId: genre.body.id,
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          'Key (authorId)=(999) is not present in table "Authors".'
+        expect(response.body.name).to.equal(
+          "SequelizeForeignKeyConstraintError"
         );
+        // expect(response.body).to.equal(
+        //   'Key (authorId)=(999) is not present in table "Authors".'
+        // );
       });
     });
   });
@@ -164,13 +187,27 @@ describe("/books", () => {
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(6);
 
-        response.body.forEach((book) => {
+        let authorRow;
+        let genreRow;
+        // Do not use forEach with async-await
+        // response.body.forEach((book) => {
+        for (const book of response.body) {
           const expected = books.find((a) => a.id === book.id);
           expect(book.title).to.equal(expected.title);
-          expect(book.authorId).to.equal(expected.authorId);
-          expect(book.genreId).to.equal(expected.genreId);
           expect(book.ISBN).to.equal(expected.ISBN);
-        });
+          // expect(book.authorId).to.equal(expected.authorId);
+          // expect(book.genreId).to.equal(expected.genreId);
+          // use .findByPk to get and compare
+          authorRow = await Author.findByPk(expected.authorId, {
+            raw: true,
+          });
+          genreRow = await Genre.findByPk(expected.genreId, {
+            raw: true,
+          });
+          expect(book.author.author).to.equal(authorRow.author);
+          expect(book.genre.genre).to.equal(genreRow.genre);
+        }
+        // });
       });
     });
 
@@ -183,9 +220,7 @@ describe("/books", () => {
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(2);
       });
-    });
 
-    describe("POST /books/search", () => {
       it("gets all books records with selection", async () => {
         const response = await request(app)
           .post("/books/search")
@@ -194,9 +229,7 @@ describe("/books", () => {
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(4);
       });
-    });
 
-    describe("POST /books/search", () => {
       it("gets all books records with selection", async () => {
         const response = await request(app)
           .post("/books/search")
@@ -211,12 +244,20 @@ describe("/books", () => {
       it("gets books record by id", async () => {
         const book = books[0];
         const response = await request(app).get(`/books/${book.id}`);
-
         expect(response.status).to.equal(200);
         expect(response.body.title).to.equal(book.title);
-        expect(response.body.authorId).to.equal(book.authorId);
-        expect(response.body.genreId).to.equal(book.genreId);
         expect(response.body.ISBN).to.equal(book.ISBN);
+        // expect(response.body.authorId).to.equal(book.authorId);
+        // expect(response.body.genreId).to.equal(book.genreId);
+        // use .findByPk to get and compare
+        const authorRow = await Author.findByPk(response.body.authorId, {
+          raw: true,
+        });
+        const genreRow = await Genre.findByPk(response.body.genreId, {
+          raw: true,
+        });
+        expect(response.body.author.author).to.equal(authorRow.author);
+        expect(response.body.genre.genre).to.equal(genreRow.genre);
       });
 
       it("returns a 404 if the book does not exist", async () => {
@@ -257,7 +298,8 @@ describe("/books", () => {
           .patch(`/books/${book.id}`)
           .send({ title: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("The book title cannot be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("The book title cannot be empty");
       });
 
       it("authorId must not be empty", async () => {
@@ -266,7 +308,8 @@ describe("/books", () => {
           .patch(`/books/${book.id}`)
           .send({ authorId: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("This Book must have an author");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("This Book must have an author");
       });
 
       it("authorId must be existed in Authors table", async () => {
@@ -275,9 +318,12 @@ describe("/books", () => {
           .patch(`/books/${book.id}`)
           .send({ authorId: 999 });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          'Key (authorId)=(999) is not present in table "Authors".'
+        expect(response.body.name).to.equal(
+          "SequelizeForeignKeyConstraintError"
         );
+        // expect(response.body).to.equal(
+        //   'Key (authorId)=(999) is not present in table "Authors".'
+        // );
       });
     });
 

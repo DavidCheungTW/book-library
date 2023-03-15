@@ -3,6 +3,7 @@ const ReaderModel = require("./reader");
 const BookModel = require("./book");
 const AuthorModel = require("./author");
 const GenreModel = require("./genre");
+const OrderModel = require("./order");
 
 const { PGDATABASE, PGUSER, PGPASSWORD, PGHOST, PGPORT } = process.env;
 
@@ -18,6 +19,7 @@ const setupDatabase = () => {
   const Book = BookModel(connection, Sequelize);
   const Author = AuthorModel(connection, Sequelize);
   const Genre = GenreModel(connection, Sequelize);
+  const Order = OrderModel(connection, Sequelize);
 
   Book.belongsTo(Author, {
     as: "author",
@@ -41,6 +43,28 @@ const setupDatabase = () => {
     },
   });
 
+  Order.belongsTo(Book, {
+    as: "book",
+    foreignKey: {
+      allowNull: false,
+      validate: {
+        notNull: { msg: "Order must have a book" },
+        notEmpty: { msg: "Order must have a book" },
+      },
+    },
+  });
+
+  Order.belongsTo(Reader, {
+    as: "reader",
+    foreignKey: {
+      allowNull: false,
+      validate: {
+        notNull: { msg: "Order must have a reader" },
+        notEmpty: { msg: "Order must have a reader" },
+      },
+    },
+  });
+
   connection.sync({ alter: true });
 
   return {
@@ -48,6 +72,7 @@ const setupDatabase = () => {
     Book,
     Author,
     Genre,
+    Order,
   };
 };
 

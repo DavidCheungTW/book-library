@@ -70,6 +70,22 @@ Here are the user stories for the application:
    So I can find books I am interested in
    ```
 
+### RESTful web API design
+
+| Resource        | POST                                                                                                           | GET                                              | PATCH                                            | DELETE               |
+| --------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------ | -------------------- |
+| /authors        | create a new author, JSON = {"author"="string"}                                                                | retrieve all authors                             | -                                                | -                    |
+| /authors/search | retrieve authors for selection, JSON = {selection}                                                             | -                                                | -                                                | -                    |
+| /authors/:id    | -                                                                                                              | retrieve author details for id                   | update author for id, JSON = {"author"="string"} | delete author for id |
+| /genres         | create a new genre, JSON = {"genre"="string"}                                                                  | retrieve all genres                              | -                                                | -                    |
+| /genres/search  | retrieve genres for selection, JSON = {selection}                                                              | -                                                | -                                                | -                    |
+| /genres/:id     | -                                                                                                              | retrieve genre details for id                    | update genre for id, JSON = {"genre"="string"}   | delete genre for id  |
+| /books          | create a new book, JSON = { "title":"string", "ISBN":"string", "authorId":foreign key, "genreId": foreign key} | retrieve all books with author and genre details | -                                                | -                    |
+| /books/search   | retrieve books for selection, JSON = {any selection}                                                           | -                                                | -                                                | -                    |
+| /books/:id      | -                                                                                                              | retrieve book details for id                     | update book for id, JSON = {any selection}       | delete book for id   |
+| /readers        | create a new reader, JSON = {"name": "string", "email": "string", "password": "string"}                        | retrieve all readers                             | -                                                | -                    |
+| /readers/:id    | -                                                                                                              | retrieve reader details for id                   | update reader for id, JSON = {any selection}     | delete reader for id |
+
 ## Project setup
 
 ### Environment setup
@@ -118,19 +134,16 @@ Here are the user stories for the application:
 
 ### Test by node
 
-1. use `book_library_dev_test` database
-2. change to book-library directory
+1. use PGDATABASE in .env.test file
+2. change directory to book-library
 3. run `npm test` to execute the test
-4. add test case to \*.test.js files
-5. run `npm test` to execute the test again
 
 ### Test by Postman
 
-1. use `book_library_dev` database
-2. change to book-library directory
+1. use PGDATABASE in .env file
+2. change directory to book-library
 3. run `npm start` to start testing
-4. input test cases in Postman and check results (remark: suggest to use \*.test.js test cases first, then you can add your own test case)
-5. Example:
+4. input test cases in Postman and check results, for example:
 
    Add Author record:
 

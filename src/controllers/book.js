@@ -1,27 +1,33 @@
 const { Book } = require("../models");
-const helper = require("../controllers/helper");
-const { json } = require("body-parser");
+const {
+  createItem,
+  readItem,
+  searchItem,
+  getItemById,
+  patchItem,
+  deleteItem,
+} = require("../controllers/helper");
 
 exports.createBook = (req, res) => {
-  helper.createItem(Book, req, res);
+  createItem(Book, req, res);
 };
 
 exports.readBook = (req, res) => {
-  helper.readItem(Book, req, res);
+  readItem(Book, req, res);
 };
 
 exports.searchBook = (req, res) => {
-  helper.searchItem(Book, req, res);
+  searchItem(Book, req, res);
 };
 
 exports.readSingleBook = (req, res) => {
-  helper.getItemById(Book, req, res);
+  getItemById(Book, req, res);
 };
 
 exports.patchBook = (req, res) => {
-  helper.patchItem(Book, req, res);
+  patchItem(Book, req, res);
 };
 
 exports.deleteBook = (req, res) => {
-  helper.deleteItem(Book, req, res);
+  deleteItem(Book, req, res);
 };

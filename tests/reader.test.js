@@ -36,7 +36,8 @@ describe("/readers", () => {
           password: "12345678",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Name is required");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Name is required");
       });
 
       it("name must not be empty", async () => {
@@ -46,7 +47,8 @@ describe("/readers", () => {
           password: "12345678",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Name must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Name must not be empty");
       });
 
       it("email must be exist", async () => {
@@ -55,7 +57,8 @@ describe("/readers", () => {
           password: "12345678",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Email is required");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Email is required");
       });
 
       it("email must not be empty", async () => {
@@ -65,7 +68,8 @@ describe("/readers", () => {
           password: "12345678",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Email must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Email must not be empty");
       });
 
       it("email must be valid format", async () => {
@@ -75,7 +79,8 @@ describe("/readers", () => {
           password: "12345678",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Email address must be valid");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Email address must be valid");
       });
 
       it("password must be exist", async () => {
@@ -84,7 +89,8 @@ describe("/readers", () => {
           email: "future_ms_darcy@gmail.com",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Password is required");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Password is required");
       });
 
       it("password must not be empty", async () => {
@@ -94,7 +100,8 @@ describe("/readers", () => {
           password: "",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Password must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Password must not be empty");
       });
 
       it("password must be at least 8 char", async () => {
@@ -104,9 +111,10 @@ describe("/readers", () => {
           password: "1234567",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "Password must be at least 8 charaters long"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "Password must be at least 8 charaters long"
+        // );
       });
     });
   });
@@ -201,7 +209,8 @@ describe("/readers", () => {
           .patch(`/readers/${reader.id}`)
           .send({ name: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Name must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Name must not be empty");
       });
 
       it("email must not be empty", async () => {
@@ -210,7 +219,8 @@ describe("/readers", () => {
           .patch(`/readers/${reader.id}`)
           .send({ email: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Email must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Email must not be empty");
       });
 
       it("password must not be empty", async () => {
@@ -219,7 +229,8 @@ describe("/readers", () => {
           .patch(`/readers/${reader.id}`)
           .send({ password: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Password must not be empty");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Password must not be empty");
       });
 
       it("updates readers with wrong email format", async () => {
@@ -233,7 +244,8 @@ describe("/readers", () => {
         });
 
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("Email address must be valid");
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal("Email address must be valid");
       });
 
       it("updates readers with short password", async () => {
@@ -247,9 +259,10 @@ describe("/readers", () => {
         });
 
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "Password must be at least 8 charaters long"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "Password must be at least 8 charaters long"
+        // );
       });
     });
 

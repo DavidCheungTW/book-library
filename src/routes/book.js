@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/book");
 
-router.post("/books", controllers.createBook);
-router.get("/books", controllers.readBook);
-router.post("/books/search", controllers.searchBook);
-router.get("/books/:id", controllers.readSingleBook);
-router.patch("/books/:id", controllers.patchBook);
-router.delete("/books/:id", controllers.deleteBook);
+router.route("/books").post(controllers.createBook).get(controllers.readBook);
+
+router.route("/books/search").post(controllers.searchBook);
+
+router
+  .route("/books/:id")
+  .get(controllers.readSingleBook)
+  .patch(controllers.patchBook)
+  .delete(controllers.deleteBook);
 
 module.exports = router;

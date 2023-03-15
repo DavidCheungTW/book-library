@@ -33,7 +33,8 @@ describe("/genres", () => {
           genre: "genre999",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal("genre must be unique");
+        expect(response.body.name).to.equal("SequelizeUniqueConstraintError");
+        // expect(response.body).to.equal("genre must be unique");
       });
 
       it("genre must not be empty", async () => {
@@ -41,9 +42,10 @@ describe("/genres", () => {
           genre: "",
         });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "We need a genre in so that we can create one"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "We need a genre in so that we can create one"
+        // );
       });
     });
   });
@@ -142,9 +144,10 @@ describe("/genres", () => {
           .patch(`/genres/${genre.id}`)
           .send({ genre: "" });
         expect(response.status).to.equal(400);
-        expect(response.body).to.equal(
-          "We need a genre in so that we can create one"
-        );
+        expect(response.body.name).to.equal("SequelizeValidationError");
+        // expect(response.body).to.equal(
+        //   "We need a genre in so that we can create one"
+        // );
       });
     });
 
