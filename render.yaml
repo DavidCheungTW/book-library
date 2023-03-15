@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: book-library-dav-oct22
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run migrate && node index.js
+    envVars:
+      - key: PGDATABASE
+        fromDatabase:
+          name: book-library-database-dav-oct22
+          property: database
+      - key: PGUSER
+        fromDatabase:
+          name: book-library-database-dav-oct22
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: book-library-database-dav-oct22
+          property: password
+      - key: PGHOST
+        fromDatabase:
+          name: book-library-database-dav-oct22
+          property: host
+      - key: PGPORT
+        fromDatabase:
+          name: book-library-database-dav-oct22
+          property: port
+
+databases:
+  - name: book-library-database-dav-oct22
+    plan: free
+    region: frankfurt
+    databaseName: book_library_dev
+    ipAllowList: []
