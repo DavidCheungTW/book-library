@@ -3,3 +3,4 @@ node_modules/
 myBackup/
 .env.test
 .env.backup
+.env
