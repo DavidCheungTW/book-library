@@ -5,7 +5,7 @@ services:
     region: frankfurt
     plan: free
     buildCommand: npm ci
-    startCommand: npm run migrate && node index.js
+    startCommand: node index.js
     envVars:
       - key: PGDATABASE
         fromDatabase:
@@ -32,5 +32,5 @@ databases:
   - name: music-library-database-dav-oct22
     plan: free
     region: frankfurt
-    databaseName: music_library_dev
+    databaseName: book_library_dev
     ipAllowList: []
